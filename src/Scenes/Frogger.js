@@ -2,6 +2,9 @@ class Frogger extends Phaser.Scene {
     constructor() {
         super("froggerScene");
         this.my = {sprite: {}};
+        this.jumpReady = true;
+        this.jumpCooldown = 500; //ms
+        this.jumpDistance = 50;
     }
 
     preload() {
@@ -17,17 +20,32 @@ class Frogger extends Phaser.Scene {
     }
     
     update() {
-        if (this.downKey.isDown) {
-            this.my.sprite.frog.y += 5;
+        if (this.downKey.isDown && this.jumpReady) {
+            this.my.sprite.frog.y += this.jumpDistance;
+            this.jumpUsed();
         }
-        if (this.upKey.isDown) {
-            this.my.sprite.frog.y -= 5;
+        if (this.upKey.isDown && this.jumpReady) {
+            this.my.sprite.frog.y -= this.jumpDistance;
+            this.jumpUsed();
         }
-        if (this.leftKey.isDown) {
-            this.my.sprite.frog.x -= 5;
+        if (this.leftKey.isDown && this.jumpReady) {
+            this.my.sprite.frog.x -= this.jumpDistance;
+            this.jumpUsed();
         }
-        if (this.rightKey.isDown) {
-            this.my.sprite.frog.x += 5;
+        if (this.rightKey.isDown && this.jumpReady) {
+            this.my.sprite.frog.x += this.jumpDistance;
+            this.jumpUsed();
         }
     }
+
+    jumpRefreshed() {
+        this.jumpReady = true;
+        return;
+    }
+
+    jumpUsed() {
+        this.jumpReady = false;
+        this.time.delayedCall(this.jumpCooldown, this.jumpRefreshed, null, this);
+    }
 }
+
